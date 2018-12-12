@@ -1,2 +1,3 @@
 # WikipediaHarvester
-For saving wikipedia articles as text
+For saving wikipedia articles as plain text.
+

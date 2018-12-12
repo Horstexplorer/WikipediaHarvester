@@ -23,12 +23,11 @@ class WikipediaWorker {
             if(doc.getElementsByTagName("rev") != null){
                 NodeList nList = doc.getElementsByTagName("rev");
                 resultstring = nList.item(0).getTextContent();
-                System.out.print(" << Found");
             }
 
 
         }catch (Exception e){
-            System.out.println(" << Not Found");
+            //empty
         }
         return resultstring;
     }
@@ -62,6 +61,8 @@ class WikipediaWorker {
         input = input.replaceAll("[ü|Ü]", "ue");
         input = input.replaceAll("[ß]", "sz");
 
+        //replace dots with new line
+        input = input.replaceAll("(?m)((?<=[a-zA-Z]{4})|(?<=\\ ))\\.", "\n");
         //replace numbers
 
         Pattern pattern = Pattern.compile("(?m)\\d+");
@@ -90,7 +91,6 @@ class WikipediaWorker {
     String reline(String input){
 
 
-        input = input.replaceAll("(?m)((?<=[a-zA-Z]{4})|(?<=\\ ))\\.", "\n");
         input = input.replaceAll("(?m)^ *", "");
         input = input.replaceAll("(?m)^\\t*\\n+", "");
         input = input.replaceAll(" {2}", " ");

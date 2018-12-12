@@ -29,8 +29,8 @@ class FileHandler {
         return lines.toArray(new String[lines.size()]);
     }
 
-    void writefile(String filename, String input){
-
+    void writefile(String filepath, String filename, String input){
+        boolean failed = false;
         BufferedWriter bw = null;
         FileWriter fw = null;
 
@@ -39,22 +39,21 @@ class FileHandler {
         if (!directory.exists()) {
             directory.mkdir();
         }
-        filename = filename.replaceAll("[<>:\"\\\\\\|\\?\\*]", "-");
+        filename = filename.replaceAll("[<>:\"\\\\\\|\\?\\*\\/]", "-");
         if(!input.equals("") || !input.isEmpty()){
             try{
-                fw = new FileWriter(filename+".txt");
+                fw = new FileWriter(filepath+filename+".txt");
                 bw = new BufferedWriter(fw);
                 bw.write(input);
             }catch (Exception e){
-                System.out.println(" << Failed");
+                System.err.println("[ERROR][FileHandler] "+e);
             }finally {
                 try{
                     bw.flush();
                     bw.close();
                 }catch (Exception ex){
-                    System.out.println(" << Failed");
+                    System.err.println("[ERROR][FileHandler] "+ex);
                 }
-                System.out.println(" << Done");
             }
         }
     }

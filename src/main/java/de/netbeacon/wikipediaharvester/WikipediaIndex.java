@@ -80,7 +80,7 @@ public class WikipediaIndex {
             inputstring = inputstring.replaceAll("(?m)^\\d*\\s", "");
 
             FileHandler fh = new FileHandler();
-            fh.writefile("input",inputstring);
+            fh.writefile("./","input",inputstring);
 
         } catch (Exception e){
             e.printStackTrace();
