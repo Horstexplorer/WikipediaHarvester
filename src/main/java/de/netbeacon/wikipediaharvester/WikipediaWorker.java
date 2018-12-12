@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 class WikipediaWorker {
 
-    String getstring(String word){
+    String getstring(String word, String language){
         String resultstring = "";
-        String url = "https://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=xml&&titles="+word;
+        String url = "https://"+language+".wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=xml&&titles="+word;
         try{
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
