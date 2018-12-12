@@ -76,7 +76,8 @@ public class WikipediaIndex {
                 reader.close();
             }
             inputstring = inputstring.substring(inputstring.indexOf("\n"+1));
-            inputstring = inputstring.replaceAll("(?m)^\\d\\s", "");
+            inputstring = inputstring.replaceAll("(?m)^\\t*\\n+", "");
+            inputstring = inputstring.replaceAll("(?m)^\\d*\\s", "");
 
             FileHandler fh = new FileHandler();
             fh.writefile("input",inputstring);

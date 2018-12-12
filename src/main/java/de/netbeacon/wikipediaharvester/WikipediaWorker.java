@@ -64,13 +64,21 @@ class WikipediaWorker {
 
         //replace numbers
 
-        Pattern pattern = Pattern.compile("\\b\\d+\\b");
-        Matcher matcher = pattern.matcher(input);
-        while (matcher.find()) {
-            NumberToText ntt = new NumberToText();
-            String number = ntt.intToText(Integer.parseInt(matcher.group()));
-            input = input.replaceAll(matcher.group(), number);
+        Pattern pattern = Pattern.compile("(?m)\\d+");
+        for(int i = 0; i < 5;i++){ //should be enough to convert everything.
+            Matcher matcher = pattern.matcher(input);
+            while (matcher.find()) {
+                NumberToText ntt = new NumberToText();
+                String number;
+                if(Long.parseLong(matcher.group())<=Integer.MAX_VALUE){
+                    number = ntt.intToText(Integer.parseInt(matcher.group()));
+                }else{
+                    number = "null";
+                }
+                input = input.replaceAll(matcher.group(), number);
+            }
         }
+
 
         //replace others
         input = input.replaceAll("[^\\s\\w\\. \\n\\r]", "");
@@ -82,9 +90,10 @@ class WikipediaWorker {
     String reline(String input){
 
 
-        input = input.replaceAll("\\. ", "\n");
+        input = input.replaceAll("(?m)((?<=[a-zA-Z]{4})|(?<=\\ ))\\.", "\n");
         input = input.replaceAll("(?m)^ *", "");
-
+        input = input.replaceAll("(?m)^\\t*\\n+", "");
+        input = input.replaceAll(" {2}", " ");
 
         return input;
     }

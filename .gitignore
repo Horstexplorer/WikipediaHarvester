@@ -5,3 +5,4 @@
 *.config
 /output/
 /input.txt
+/out/
