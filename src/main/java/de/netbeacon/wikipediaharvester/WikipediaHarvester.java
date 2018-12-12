@@ -1,41 +1,63 @@
 package de.netbeacon.wikipediaharvester;
 
 import static java.lang.Thread.sleep;
-import java.text.DecimalFormat;
 
+import java.io.File;
+import java.text.DecimalFormat;
 public class WikipediaHarvester {
 
     public static void main(String[] array) throws Exception{
 
-        DecimalFormat df = new DecimalFormat("0.00");
 
         System.out.println();
         System.out.println("WikipediaHarvester");
         System.out.println(">> Wikipedia to text <<");
         System.out.println();
+        File inputfile = new File("./input.txt");
+        if (!inputfile.exists()) {
+            index();
+        }
+        download();
+    }
+
+    static void index(){
+        WikipediaIndex wi = new WikipediaIndex();
+        wi.download("https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-all-titles.gz", "dewiki-latest-all-titles.gz");
+        wi.unzip("dewiki-latest-all-titles.gz","dewiki-latest-all-titles.txt");
+        wi.tweak("dewiki-latest-all-titles.txt","input.txt");
+        wi.clean("dewiki-latest-all-titles.gz", "dewiki-latest-all-titles.txt");
+    }
+
+    static void download(){
+        DecimalFormat df = new DecimalFormat("000.000");
         int count = 1;
         FileHandler fh = new FileHandler();
-        //read input file
-        System.out.println("[INFO] Array << File");
-        String[] input = fh.readinputfile();
-        int size = input.length;
-        System.out.println("[INFO] File contains "+size+" elements.");
-        System.out.println();
-        sleep(2500);
+
+        try{
+            //read input file
+            System.out.println("[INFO] Array << File");
+            String[] input = fh.readinputfile();
+            int size = input.length;
+            System.out.println("[INFO] File contains "+size+" elements. Processing may take a while...");
+            System.out.println();
+            sleep(2500);
 
 
-        for(String line:input){
-            //Calculate progress
-            double pers = (double)count/size;
-            float progress = (float)pers*100;
-            //get
-            System.out.print("[INFO]["+df.format(progress)+"%] Wikipedia << "+line);
-            WikipediaWorker ww = new WikipediaWorker();
-            String wikistring = ww.reline(ww.clean(ww.getstring(line)));
+            for(String line:input){
+                //Calculate progress
+                double pers = (double)count/size;
+                float progress = (float)pers*100;
+                //get
+                System.out.print("[INFO]["+df.format(progress)+"%] Wikipedia << "+line);
+                WikipediaWorker ww = new WikipediaWorker();
+                String wikistring = ww.reline(ww.clean(ww.getstring(line)));
+                //Write to file
+                fh.writefile("./output/"+line, wikistring);
+                count++;
+            }
 
-            //Write to file
-            fh.writefile(line, wikistring);
-            count++;
+        }catch (Exception e){
+            e.printStackTrace();
         }
     }
 

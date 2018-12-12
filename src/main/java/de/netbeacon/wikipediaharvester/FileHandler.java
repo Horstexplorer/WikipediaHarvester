@@ -39,22 +39,22 @@ class FileHandler {
         if (!directory.exists()) {
             directory.mkdir();
         }
-
+        filename = filename.replaceAll("[<>:\"\\\\\\|\\?\\*]", "-");
         if(!input.equals("") || !input.isEmpty()){
             try{
-                fw = new FileWriter("./output/"+filename+".txt");
+                fw = new FileWriter(filename+".txt");
                 bw = new BufferedWriter(fw);
                 bw.write(input);
             }catch (Exception e){
-                System.out.println(" << Download Failed");
+                System.out.println(" << Failed");
             }finally {
                 try{
                     bw.flush();
                     bw.close();
                 }catch (Exception ex){
-                    System.out.println(" << Download Failed");
+                    System.out.println(" << Failed");
                 }
-                System.out.println(" << Downloaded");
+                System.out.println(" << Done");
             }
         }
     }
