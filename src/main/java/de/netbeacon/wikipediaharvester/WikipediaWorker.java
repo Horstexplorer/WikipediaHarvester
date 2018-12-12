@@ -11,9 +11,9 @@ import java.util.regex.Pattern;
 
 class WikipediaWorker {
 
-    String getstring(String word){
+    String getstring(String word, String language){
         String resultstring = "";
-        String url = "https://de.wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=xml&&titles="+word;
+        String url = "https://"+language+".wikipedia.org/w/api.php?action=query&prop=revisions&rvprop=content&format=xml&&titles="+word;
         try{
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -23,12 +23,11 @@ class WikipediaWorker {
             if(doc.getElementsByTagName("rev") != null){
                 NodeList nList = doc.getElementsByTagName("rev");
                 resultstring = nList.item(0).getTextContent();
-                System.out.print(" << Found");
             }
 
 
         }catch (Exception e){
-            System.out.println(" << Not Found");
+            //empty
         }
         return resultstring;
     }
@@ -62,15 +61,25 @@ class WikipediaWorker {
         input = input.replaceAll("[ü|Ü]", "ue");
         input = input.replaceAll("[ß]", "sz");
 
+        //replace dots with new line
+        input = input.replaceAll("(?m)((?<=[a-zA-Z]{4})|(?<=\\ ))\\.", "\n");
         //replace numbers
 
-        Pattern pattern = Pattern.compile("\\b\\d+\\b");
-        Matcher matcher = pattern.matcher(input);
-        while (matcher.find()) {
-            NumberToText ntt = new NumberToText();
-            String number = ntt.intToText(Integer.parseInt(matcher.group()));
-            input = input.replaceAll(matcher.group(), number);
+        Pattern pattern = Pattern.compile("(?m)\\d+");
+        for(int i = 0; i < 5;i++){ //should be enough to convert everything.
+            Matcher matcher = pattern.matcher(input);
+            while (matcher.find()) {
+                NumberToText ntt = new NumberToText();
+                String number;
+                if(Long.parseLong(matcher.group())<=Integer.MAX_VALUE){
+                    number = ntt.intToText(Integer.parseInt(matcher.group()));
+                }else{
+                    number = "null";
+                }
+                input = input.replaceAll(matcher.group(), number);
+            }
         }
+
 
         //replace others
         input = input.replaceAll("[^\\s\\w\\. \\n\\r]", "");
@@ -82,9 +91,9 @@ class WikipediaWorker {
     String reline(String input){
 
 
-        input = input.replaceAll("\\. ", "\n");
         input = input.replaceAll("(?m)^ *", "");
-
+        input = input.replaceAll("(?m)^\\t*\\n+", "");
+        input = input.replaceAll(" {2}", " ");
 
         return input;
     }
