@@ -4,22 +4,14 @@ import static java.lang.Thread.sleep;
 
 import java.io.File;
 import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class WikipediaHarvester {
 
     private static int count = 1;
     private static int size = 0;
-    private static long averageduration = 0;
 
 
-    public static void main(String[] array) throws Exception{
-
-
-        System.out.println();
-        System.out.println("WikipediaHarvester");
+    public static void main(String[] array){
         System.out.println(">> Wikipedia to text <<");
         System.out.println();
         File inputfile = new File("./input.txt");
@@ -29,7 +21,7 @@ public class WikipediaHarvester {
         download();
     }
 
-    static void index(){
+    private static void index(){
         WikipediaIndex wi = new WikipediaIndex();
         wi.download("https://dumps.wikimedia.org/dewiki/latest/dewiki-latest-all-titles.gz", "dewiki-latest-all-titles.gz");
         wi.unzip("dewiki-latest-all-titles.gz","dewiki-latest-all-titles.txt");
@@ -37,7 +29,7 @@ public class WikipediaHarvester {
         wi.clean("dewiki-latest-all-titles.gz", "dewiki-latest-all-titles.txt");
     }
 
-    static void download(){
+    private static void download(){
         DecimalFormat df = new DecimalFormat("0.000");
         FileHandler fh = new FileHandler();
 
@@ -50,17 +42,12 @@ public class WikipediaHarvester {
             sleep(2500);
             System.out.println("[INFO] Processing started.");
             System.out.println();
-            System.out.println("[INFO][Remaining: ~~:~~:~~][ 0,000% ]");
-            List in = Arrays.asList(input);
-            in.parallelStream().forEach((value)->
-                {
-                    try{
-                        execute((String)value,fh,df);
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            );
+            System.out.println("[INFO][ 0,000% ]");
+
+            for (String l : input){
+                execute(l,fh,df);
+            }
+
         }catch (Exception e){
             System.err.println();
             System.err.println("[ERROR][Main] "+e);
@@ -68,28 +55,31 @@ public class WikipediaHarvester {
         }
     }
 
-    static void execute(String line, FileHandler fh, DecimalFormat df){
-        //progress calculations
-        long remainingtime = 0;
-        long currentms = System.currentTimeMillis();
-        remainingtime = averageduration*((size-count));
-        String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(remainingtime),
-                TimeUnit.MILLISECONDS.toMinutes(remainingtime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(remainingtime)),
-                TimeUnit.MILLISECONDS.toSeconds(remainingtime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(remainingtime)));
+    private static void execute(String line, FileHandler fh, DecimalFormat df) throws Exception{
+
         double pers = (double)count/size;
         float progress = (float)pers*100;
 
-        //real work
-        WikipediaWorker ww = new WikipediaWorker();
-        String wikistring = ww.reline(ww.clean(ww.getstring(line, "de")));
-        //Write to file
-        fh.writefile("./output/"+line.charAt(0)+"/",line, wikistring);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //real work
+                WikipediaWorker ww = new WikipediaWorker();
+                String wikistring = ww.reline(ww.clean(ww.getstring(line, "de")));
+                //Write to file
+                fh.writefile("./output/"+lien(line).charAt(0)+"/",line, wikistring);
+            }
+        }).start();
 
-        //print status every 200 processed
-        if((count%200)==0){
-            System.out.println("[INFO][Remaining: "+hms+"][ "+df.format(progress)+"% ]");
+        //print status every 1000 processed
+        if((count%1000)==0){
+            System.out.println("[INFO][ "+df.format(progress)+"% ]");
+            Thread.sleep(500);
         }
         count++;
-        averageduration = (((averageduration*count)+(System.currentTimeMillis()-currentms))/(count+1));
+    }
+
+    private static String lien(String line){
+        return line.replaceAll("[<>:\"\\\\\\|\\?\\*\\/]", "-");
     }
 }
