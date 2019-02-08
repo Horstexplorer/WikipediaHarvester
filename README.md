@@ -1,7 +1,7 @@
 # WikipediaHarvester
 ###### For saving wikipedia articles as plain text.
 ```
-Current Version: 1.0.0.3
+Current Version: 1.0.0.4
 ```
 ### Customize language:
 There are only a few things that need to be changed so that it will work with your prefered language:
@@ -20,6 +20,6 @@ NumberToText.java >>> numerals
    (Only if no input.txt exist. You can create one with your own selection)
 2b. Those titles get extracted to input.ini
 3. The program should get the content of every wikipedia article, remove everything besides the content, convert numbers to text, reformating the text and save it to a file.
-   This may take a while (~94h)
+   This may take a while (~5h)
 4. Done
 ```
