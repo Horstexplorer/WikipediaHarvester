@@ -34,25 +34,31 @@ class FileHandler {
         BufferedWriter bw = null;
         FileWriter fw = null;
 
+        filename = filename.replaceAll("[<>:\"\\\\\\|\\?\\*\\/]", "-");
+
         //Check if dir exists
-        File directory = new File("./output/");
+        File directoryo = new File("./output/");
+        if (!directoryo.exists()) {
+            directoryo.mkdir();
+        }
+        File directory = new File(filepath);
         if (!directory.exists()) {
             directory.mkdir();
         }
-        filename = filename.replaceAll("[<>:\"\\\\\\|\\?\\*\\/]", "-");
-        if(!input.equals("") || !input.isEmpty()){
-            try{
-                fw = new FileWriter(filepath+filename+".txt");
+
+        if(!input.equals("") || !input.isEmpty()) {
+            try {
+                fw = new FileWriter(filepath + filename + ".txt");
                 bw = new BufferedWriter(fw);
                 bw.write(input);
-            }catch (Exception e){
-                System.err.println("[ERROR][FileHandler] "+e);
-            }finally {
-                try{
+            } catch (Exception e) {
+                System.err.println("[ERROR][FileHandler] " + e);
+            } finally {
+                try {
                     bw.flush();
                     bw.close();
-                }catch (Exception ex){
-                    System.err.println("[ERROR][FileHandler] "+ex);
+                } catch (Exception ex) {
+                    System.err.println("[ERROR][FileHandler] " + ex);
                 }
             }
         }
