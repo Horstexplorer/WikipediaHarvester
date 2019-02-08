@@ -81,7 +81,7 @@ public class WikipediaIndex {
 
             FileHandler fh = new FileHandler();
             fh.writefile("./","input",inputstring);
-
+            System.out.println("<< Done");
         } catch (Exception e){
             e.printStackTrace();
         }

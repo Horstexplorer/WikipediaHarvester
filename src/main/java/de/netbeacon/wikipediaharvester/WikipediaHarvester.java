@@ -83,7 +83,7 @@ public class WikipediaHarvester {
         WikipediaWorker ww = new WikipediaWorker();
         String wikistring = ww.reline(ww.clean(ww.getstring(line, "de")));
         //Write to file
-        fh.writefile("./output/",line, wikistring);
+        fh.writefile("./output/"+line.charAt(0)+"/",line, wikistring);
 
         //print status every 200 processed
         if((count%200)==0){
