@@ -36,24 +36,23 @@ class WikipediaWorker {
 
         //Müll entfernen
 
-        input = input.replaceAll("&.*;", "");
+        input = input.replaceAll("\\<.*\\>??", "");
+        input = input.replaceAll("\\{.*\\}??", "");
+        input = input.replaceAll("\\[.*\\]??", "");
+        input = input.replaceAll("\".*\"??", "");
+
         input = input.replaceAll("\\*", "");
         input = input.replaceAll("\\'", "");
-        input = input.replaceAll("\\(", "");
-        input = input.replaceAll("\\)", "");
-        input = input.replaceAll("\\[", "");
-        input = input.replaceAll("\\]", "");
+        input = input.replaceAll("\\={2,}", "");
+        input = input.replaceAll("\\=", " ");
+        input = input.replaceAll("\\|", "");
+        input = input.replaceAll("[\\(\\)]", "");
+        input = input.replaceAll("\\-\n", "");
+        input = input.replaceAll("\\!.*", "");
+        input = input.replaceAll("[\\{\\}\\(\\)\\<\\>]", "");
 
         input = input.replaceAll("(www|http:|https:)+[^\\s]+[\\w]", "");
-
-
-        input = input.replaceAll("\\<\\!\\-\\-(.*?)\\-\\-\\>", "");
-        input = input.replaceAll("(?s)<gallery>.*?<\\/gallery>", "");
-        input = input.replaceAll("(?s)<references>.*?<\\/references>", "");
-        input = input.replaceAll(".*Datei:.*", "");
-        input = input.replaceAll("\\{.*\\}", "");
-        input = input.replaceAll("\\<.*\\>", "");
-        input = input.replaceAll("(?s)\\{.*?\\}", "");
+        input = input.replaceAll("File:.*", "");
 
         //Sonderzeichen umwandeln
         input = input.replaceAll("[ä|Ä]", "ae");
